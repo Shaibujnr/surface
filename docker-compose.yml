@@ -1,7 +1,6 @@
 version: "3.5"
 
 services:
-
   cache:
     image: memcached
     restart: unless-stopped
@@ -51,50 +50,60 @@ services:
         max-size: "1M"
         max-file: "10"
 
-  celery_worker:
-    build:
-      dockerfile: Dockerfile
-      context: api
-    command: celery -A tempestas_api worker -l info
-    env_file:
-      - api/production.env
-    restart: unless-stopped
-    volumes:
-      - ./api:/surface
-      - ./data/media/documents/ingest:/data/documents/ingest
-      - ./data/media/exported_data:/data/exported_data
-      - ./data/shared:/data/shared
-    depends_on:
-      - api
-      - redis
-    networks:
-      - default
-      - surface_integration
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1M"
-        max-file: "10"
+  # celery_worker:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: api
+  #   command: ["celery", "-A", "tempestas_api", "worker", "-l", "info"]
+  #   env_file:
+  #     - api/production.env
+  #   restart: unless-stopped
+  #   volumes:
+  #     - ./api:/surface
+  #     - ./data/media/documents/ingest:/data/documents/ingest
+  #     - ./data/media/exported_data:/data/exported_data
+  #     - ./data/shared:/data/shared
+  #   depends_on:
+  #     - api
+  #     - redis
+  #   networks:
+  #     - default
+  #     - surface_integration
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "1M"
+  #       max-file: "10"
 
-  celery_beat:
-    build:
-      dockerfile: Dockerfile
-      context: api
-    restart: unless-stopped
-    command: celery -A tempestas_api beat -l info --scheduler django_celery_beat.schedulers:DatabaseScheduler
-    env_file:
-      - api/production.env
-    volumes:
-      - ./api:/surface
-      - ./data/postgresql:/data
-    depends_on:
-      - api
-      - redis
-    logging:
-      driver: "json-file"
-      options:
-        max-size: "1M"
-        max-file: "10"
+  # celery_beat:
+  #   build:
+  #     dockerfile: Dockerfile
+  #     context: api
+  #   restart: unless-stopped
+  #   command:
+  #     [
+  #       "celery",
+  #       "-A",
+  #       "tempestas_api",
+  #       "beat",
+  #       "-l",
+  #       "info",
+  #       "--scheduler",
+  #       "django_celery_beat.schedulers:DatabaseScheduler",
+  #     ]
+  #   env_file:
+  #     - api/production.env
+  #   volumes:
+  #     - ./api:/surface
+  #     - ./data/postgresql:/data
+  #   depends_on:
+  #     - api
+  #     - redis
+  #   logging:
+  #     driver: "json-file"
+  #     options:
+  #       max-size: "1M"
+  #       max-file: "10"
 
 volumes:
   database-volume:

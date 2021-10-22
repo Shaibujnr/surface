@@ -14,7 +14,10 @@ USER surface
 RUN pip install -U pip
 RUN pip install numpy==1.21.2 --no-warn-script-location
 
-COPY requirements.txt /requirements.txt
-RUN pip install -r /requirements.txt --no-warn-script-location
+# COPY requirements.txt /requirements.txt
+# RUN pip install -r /requirements.txt --no-warn-script-location
+
+COPY . .
+RUN pip install -e .
 
 CMD python manage.py migrate && python manage.py runserver 0.0.0.0:8000
